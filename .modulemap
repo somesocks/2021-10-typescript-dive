@@ -1,0 +1,8 @@
+
+# WARNING: this package is a controlled file generated from a template
+# do not try to make changes in here, they will be overwritten
+
+# this file is used to inform the setup process which files can affect installed modules,
+# so that fast reinstall checks are possible
+
+package.json

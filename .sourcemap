@@ -1,0 +1,12 @@
+
+# WARNING: this package is a controlled file generated from a template
+# do not try to make changes in here, they will be overwritten
+
+# this file is used to inform the build process which files might affect the build output,
+# so that fast rebuild checks are possible
+
+src/
+package-scripts/
+
+Makefile
+tsconfig.json
