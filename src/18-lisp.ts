@@ -4,10 +4,14 @@ type TTrue = { kind: 'true' };
 type TFalse = { kind: 'false' };
 type TBoolean = TTrue | TFalse;
 
-type TSymbolA = { kind: 'a' };
-type TSymbolB = { kind: 'b' };
-type TSymbolC = { kind: 'c' };
-type TSymbol = TSymbolA | TSymbolB | TSymbolC;
+type TSymbolA = { kind: 'symbol_a' };
+type TSymbolB = { kind: 'symbol_b' };
+type TSymbolC = { kind: 'symbol_c' };
+type TSymbolNot = { kind: 'symbol_not' };
+type TSymbolAnd = { kind: 'symbol_and' };
+type TSymbolOr = { kind: 'symbol_or' };
+
+type TSymbol = TSymbolA | TSymbolB | TSymbolC | TSymbolNot | TSymbolAnd | TSymbolOr;
 
 type TIf = { kind: 'if' };
 type TLet = { kind: 'let' };
@@ -45,11 +49,17 @@ type TContext = Record<string, TAtom>;
 type TGetSymbol<T extends TSymbol, U extends TContext> = U[T['kind']];
 type TSetSymbol<T extends TSymbol, U extends TAtom, V extends TContext> =
   T extends TSymbolA
-    ? V & { a: U }
+    ? V & { symbol_a: U }
     : T extends TSymbolB
-    ? V & { b: U }
+    ? V & { symbol_b: U }
     : T extends TSymbolC
-    ? V & { c: U }
+    ? V & { symbol_c: U }
+    : T extends TSymbolNot
+    ? V & { symbol_not : U }
+    : T extends TSymbolAnd
+    ? V & { symbol_and : U }
+    : T extends TSymbolOr
+    ? V & { symbol_or : U }
     : never;
 
 type TEval<T extends TAtom, U extends TContext> = T extends TPair
@@ -202,19 +212,84 @@ type PROG_DEF_2 = TMakeList<
 >;
 type RES_DEF_2 = TEval<PROG_DEF_2, TContext>;
 
-// ((define (a) (if a false true)) (true)) -> false
-type PROG_INV_1 = TMakeList<
+
+
+// (let (not (define (a) (if a false true))) (not (true))) -> false
+type PROG_NOT = TMakeList<
   [
-    TMakeList<
-      [
+    TLet,
+    TMakeList<[
+      TSymbolNot,
+      TMakeList<[
         TDefine,
         TMakeList<[TSymbolA]>,
         TMakeList<[TIf, TSymbolA, TFalse, TTrue]>
-      ]
-    >,
-    TMakeList<[TTrue]>
+        ]>,  
+    ]>,
+    TMakeList<[
+      TSymbolNot,
+      TMakeList<[
+        TTrue,  
+      ]>
+    ]>
   ]
 >;
-type RES_INV_1 = TEval<PROG_INV_1, TContext>;
+
+type RES_NOT = TEval<PROG_NOT, TContext>;
+
+
+
+// (let (and (define (a b) (if a (if b true false) false))) (and (true false))) -> false
+type PROG_AND = TMakeList<
+[
+  TLet,
+  TMakeList<[
+    TSymbolAnd,
+    TMakeList<[
+      TDefine,
+      TMakeList<[TSymbolA, TSymbolB]>,
+      TMakeList<[TIf, TSymbolA, TMakeList<[TIf, TSymbolB, TTrue, TFalse]>, TFalse]>
+    ]>,  
+  ]>,
+  TMakeList<[
+    TSymbolAnd,
+    TMakeList<[
+      TFalse,
+      TTrue,  
+    ]>
+  ]>
+]
+>;
+
+
+type RES_AND = TEval<PROG_AND, TContext>;
+
+
+
+// (let (or (define (a b) (if a true (if b true false)))) (or (true false))) -> true
+type PROG_OR = TMakeList<
+  [
+    TLet,
+    TMakeList<[
+      TSymbolOr,
+      TMakeList<[
+        TDefine,
+        TMakeList<[TSymbolA, TSymbolB]>,
+        TMakeList<[TIf, TSymbolA, TTrue, TMakeList<[TIf, TSymbolB, TTrue, TFalse]>]>
+      ]>,  
+    ]>,
+    TMakeList<[
+      TSymbolOr,
+      TMakeList<[
+        TFalse,
+        TTrue,  
+      ]>
+    ]>
+  ]
+>;
+
+
+type RES_OR = TEval<PROG_OR, TContext>;
+
 
 export default null;
