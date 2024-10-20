@@ -214,6 +214,9 @@ type RES_DEF_2 = TEval<PROG_DEF_2, TContext>;
 
 
 
+
+
+
 // (let (not (define (a) (if a false true))) (not (true))) -> false
 type PROG_NOT = TMakeList<
   [
@@ -234,6 +237,8 @@ type PROG_NOT = TMakeList<
     ]>
   ]
 >;
+
+
 
 type RES_NOT = TEval<PROG_NOT, TContext>;
 
@@ -260,6 +265,8 @@ type PROG_AND = TMakeList<
   ]>
 ]
 >;
+
+
 
 
 type RES_AND = TEval<PROG_AND, TContext>;

@@ -10,7 +10,9 @@ module.exports = {
 		'@typescript-eslint/no-empty-function': 'warn',
 		'@typescript-eslint/no-inferrable-types': 'warn',
 		'@typescript-eslint/no-unsafe-assignment': 'off',
+		'@typescript-eslint/no-unsafe-return': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',
+		'@typescript-eslint/restrict-plus-operands': 'off',
 		'prefer-const': 'off',
 	},
 };

@@ -1,28 +1,43 @@
-type TPerson = { name: string };
-type TAgedPerson = TPerson & { age: number };
-type TGenderedPerson = TPerson & { gender: string };
 
-type TPersonType<A extends TPerson> = A extends TGenderedPerson
-  ? 'gendered'
-  : A extends TAgedPerson
-  ? 'aged'
-  : 'person';
-
-type TPersonWrapper<A extends TPerson> = {
-  kind: TPersonType<A>;
-  person: A;
+type TEmailAccount = {
+  email: string;
+  passwordHash: string;
 };
 
+type TFacebookAccount = {
+  userId: string;
+  authToken: string;
+};
+
+type TAccount = TEmailAccount | TFacebookAccount;
+
+type TAccountType<A extends TAccount> =
+	A extends TEmailAccount ? 'email' : A extends TFacebookAccount ? 'facebook' : never;
+
+
+type TTaggedAccount<A extends TAccount> = A & { kind: TAccountType<A>; };
+
 // works
-let a: TPersonWrapper<TAgedPerson> = {
-  kind: 'aged',
-  person: { name: 'alice', age: 21 },
+let a : TTaggedAccount<TEmailAccount>;
+
+// works
+a = {
+  kind: 'email',
+  email: 'foo@bar.com',
+  passwordHash: '12345678',
 };
 
 // compile error
-let b: TPersonWrapper<TAgedPerson> = {
-  kind: 'aged',
-  person: { name: 'alice', gender: 'f' },
+a = {
+  email: 'foo@bar.com',
+  passwordHash: '12345678',
+};
+
+// compile error
+a = {
+  kind: 'facebook',
+  email: 'foo@bar.com',
+  passwordHash: '12345678',
 };
 
 export default null;

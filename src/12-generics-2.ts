@@ -5,29 +5,26 @@ type TReducer<A> = {
   finalize: () => A;
 };
 
-function NumberAverage(): TReducer<number> {
-  let _state = 0;
-  let _count = 0;
+function StringConcatenator(): TReducer<string> {
+  let _state = '';
 
   return {
-    init: (val: number) => {
+    init: (val: string) => {
       _state = val;
-      _count++;
     },
-    update: (val: number) => {
+    update: (val: string) => {
       _state += val;
-      _count++;
     },
-    finalize: () => _state / _count,
+    finalize: () => _state,
   };
 }
 
-let numberReducer1 = NumberAverage();
-numberReducer1.init(1);
-numberReducer1.update(2);
-numberReducer1.update(3);
+let stringConcatenator = StringConcatenator();
+stringConcatenator.init('1');
+stringConcatenator.update('2');
+stringConcatenator.update('3');
 
-// res will equal 2
-let res = numberReducer1.finalize();
+// '123'
+let res = stringConcatenator.finalize();
 
 export default null;
